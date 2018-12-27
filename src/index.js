@@ -32,7 +32,8 @@ export const ActionTypes = {
   UNDO: '@@redux-undo/UNDO',
   REDO: '@@redux-undo/REDO',
   JUMP_TO_FUTURE: '@@redux-undo/JUMP_TO_FUTURE',
-  JUMP_TO_PAST: '@@redux-undo/JUMP_TO_PAST'
+  JUMP_TO_PAST: '@@redux-undo/JUMP_TO_PAST',
+  CLEAR_HISTORY: '@@redux-undo/CLEAR_HISTORY'
 }
 // /action types
 
@@ -158,6 +159,20 @@ function jumpToPast (history, index) {
 }
 // /jumpToPast
 
+// clearHistory: clears the history
+function clearHistory (history) {
+  debug('clearHistory', {history})
+
+  const { present } = history
+
+  return {
+    past: [],
+    present: present,
+    future: []
+  }
+}
+// /undo
+
 // wrapState: for backwards compatibility to 0.4
 function wrapState (state) {
   return {
@@ -209,7 +224,8 @@ export default function undoable (reducer, rawConfig = {}) {
     undoType: rawConfig.undoType || ActionTypes.UNDO,
     redoType: rawConfig.redoType || ActionTypes.REDO,
     jumpToPastType: rawConfig.jumpToPastType || ActionTypes.JUMP_TO_PAST,
-    jumpToFutureType: rawConfig.jumpToFutureType || ActionTypes.JUMP_TO_FUTURE
+    jumpToFutureType: rawConfig.jumpToFutureType || ActionTypes.JUMP_TO_FUTURE,
+    clearHistoryType: rawConfig.clearHistoryType || ActionTypes.CLEAR_HISTORY
   }
   config.history = rawConfig.initialHistory || createHistory(config.initialState)
 
@@ -242,6 +258,11 @@ export default function undoable (reducer, rawConfig = {}) {
       case config.jumpToFutureType:
         res = jumpToFuture(state, action.index)
         debug('after jumpToFuture', res)
+        debugEnd()
+        return res ? updateState(state, res) : state
+      case config.clearHistoryType:
+        res = clearHistory(state)
+        debug('after clearHistory', res)
         debugEnd()
         return res ? updateState(state, res) : state
 
