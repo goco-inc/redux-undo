@@ -1,6 +1,6 @@
 {
   "name": "@goco/redux-undo",
-  "version": "0.9.97",
+  "version": "0.9.98",
   "description": "simple undo/redo functionality for redux state containers",
   "main": "lib/index.js",
   "typings": "typings.d.ts",
